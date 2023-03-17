@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "signal.h": "c",
+        "types.h": "c",
+        "fcntl.h": "c",
+        "time.h": "c"
+    }
+}

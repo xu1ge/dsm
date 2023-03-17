@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <signal.h>
 
-#define STREAM_SIGRTMIN 34
+#define DSM_SIGRTMIN 34
 
 int g_tasklist = -1;
 
@@ -23,11 +23,11 @@ void handleSig(int sig) {
     printf("receive sig %d\n", sig);
     switch (sig)
     {
-    case STREAM_SIGRTMIN:
+    case DSM_SIGRTMIN:
         g_tasklist = 0;
         break;
     
-    case STREAM_SIGRTMIN+1:
+    case DSM_SIGRTMIN+1:
         g_tasklist = 1;
         break;
     
