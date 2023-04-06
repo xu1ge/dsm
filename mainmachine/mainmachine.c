@@ -1,26 +1,4 @@
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
-#include <stdlib.h>
-#include <time.h>
-
-#include <fcntl.h>
-#include <unistd.h>
-// #include <sys/stat.h>
-#include <sys/types.h>
-#include <signal.h>
-
-#define DSM_SIGRTMIN 34
-#define CONFIG_PATH "/tmp/zxlog/dsm.log"
-#define DATENOW() ({time_t clock; (long int)time(&clock);})
-
-#define INFO(str, para...) do { \
-    char buff[128] = {0};\
-	sprintf(buff, "%ld [%s][%s:%d]: "str"\n",DATENOW(),__FUNCTION__,__FILE__,__LINE__,##para);\
-    int fd = open(CONFIG_PATH, O_RDWR|O_APPEND|O_CREAT, 0777);\
-    write(fd, buff, strlen(buff));\
-    close(fd);\
-}while(0)
+#include "mainmachine.h"
 
 int handleParam(int argc, char **argv, char *path, int *len) {
     if (argc != 3 || argv[1][0] != '-') {
@@ -64,17 +42,6 @@ int getStreamPid(int *pid) {
     return 0;
 }
 
-int dataIn(FILE *fp, int len) {
-    char buff[255] = { 0 };
-    fgets(buff, 255, (FILE*)fp);
-    printf("r: %s\n", buff);
-    return 0;
-}
-
-int dataOut(FILE *fp) {
-    return 0;
-}
-
 int main(int argc, char **argv) {
     int ret = 0;
     int pid = 0;
@@ -106,6 +73,10 @@ int main(int argc, char **argv) {
         case 'o':
             printf("task out %s\n", file_path);
             ret = kill(pid, DSM_SIGRTMIN+1);
+            break;
+        case 'e':
+            printf("task exit \n");
+            ret = kill(pid, DSM_SIGRTMIN+2);
             break;
         default:
             printf("error\n");

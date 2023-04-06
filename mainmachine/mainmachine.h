@@ -11,7 +11,8 @@
 #include <signal.h>
 
 #define DSM_SIGRTMIN 34
-#define CONFIG_PATH "/tmp/zxlog/dsm.log"
+
+#define CONFIG_PATH "/home/zx/code/log/dsm.log"
 #define DATENOW() ({time_t clock; (long int)time(&clock);})
 
 #define INFO(str, para...) do { \

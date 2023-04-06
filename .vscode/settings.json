@@ -3,6 +3,11 @@
         "signal.h": "c",
         "types.h": "c",
         "fcntl.h": "c",
-        "time.h": "c"
-    }
+        "time.h": "c",
+        "mainmachine.h": "c",
+        "string.h": "c",
+        "window.h": "c",
+        "stream.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
 }
