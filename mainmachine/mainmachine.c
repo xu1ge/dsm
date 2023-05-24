@@ -1,22 +1,27 @@
-#include "mainmachine.h"
+#include "mainmachine.h"//
 
 int handleParam(int argc, char **argv, char *path, int *len) {
-    if (argc != 3 || argv[1][0] != '-') {
-    printf("param error\n");
-    return 1;
-    }
-    strcpy(path, argv[2]);
-    FILE *fp = NULL;
-    fp = fopen(path, "r"); 
-    if (fp == NULL) {
-        printf("path error!: %s\n", strerror(errno));
+    if (argv[1][0] != '-' || (argc != 3 && argv[1][1] == 'i') || 
+    (argc != 2 && argv[1][1] == 'o') || (argc != 2 && argv[1][1] == 'e')) {
+        printf("param error\n");
         return 1;
     }
-    //获取文件大小
-    fseek(fp, 0L, SEEK_END);
-    *len = ftell(fp);
 
-    fclose(fp);
+    if (argc == 3) {
+        strcpy(path, argv[2]);
+        FILE *fp = NULL;
+        fp = fopen(path, "r"); 
+        if (fp == NULL) {
+            printf("path error!: %s\n", strerror(errno));
+            return 1;
+        }
+        //获取文件大小
+        fseek(fp, 0L, SEEK_END);
+        *len = ftell(fp);
+
+        fclose(fp);
+    }
+
     return 0;
 }
 
@@ -42,13 +47,38 @@ int getStreamPid(int *pid) {
     return 0;
 }
 
+int getIp(char *ip) {
+    FILE *fp = NULL;
+    char buff[32] = { 0 };
+    fp = popen("ifconfig | grep inet.*broadcast | awk '{print $2}'", "r");
+    if(fp == NULL) {
+        printf("getIp error!: %s\n", strerror(errno));
+        return 1;
+    }
+
+    fgets(buff, sizeof(buff), fp);
+    memcpy(ip, buff, sizeof(buff));
+
+    pclose(fp);
+
+    return 0;
+}
+
 int main(int argc, char **argv) {
     int ret = 0;
     int pid = 0;
     int file_size = 0;
     char file_path[50] = { 0 };
+    char ip[32] = { 0 };
     
     INFO("start:%d", ret);
+
+    ret = getIp(ip);
+    if (ret != 0) {
+        printf("getIp error %d\n", ret);
+        return 1;
+    }
+    printf("ip = %s\n", ip);
 
     ret = handleParam(argc, argv, file_path, &file_size);
     if (ret != 0) {
@@ -71,7 +101,7 @@ int main(int argc, char **argv) {
             break;
             
         case 'o':
-            printf("task out %s\n", file_path);
+            printf("task out \n");
             ret = kill(pid, DSM_SIGRTMIN+1);
             break;
         case 'e':
